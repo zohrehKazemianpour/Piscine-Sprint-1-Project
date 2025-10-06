@@ -6,4 +6,24 @@
 
 import { getUserIds } from "./common.mjs";
 
+import { getUserIds } from "./common.mjs";
+
+function populateDropdown() {
+  const dropdown = document.getElementById("user-select");
+  const userIds = getUserIds();
+
+  userIds.forEach((id) => {
+    const option = document.createElement("option");
+    option.value = id;
+    option.textContent = `User ${id}`;
+    dropdown.appendChild(option);
+  });
+}
+
+function initializePage() {
+  populateDropdown();
+}
+
+window.onload = initializePage;
+
 
