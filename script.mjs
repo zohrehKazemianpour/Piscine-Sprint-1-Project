@@ -6,7 +6,6 @@
 
 import { getUserIds } from "./common.mjs";
 
-import { getUserIds } from "./common.mjs";
 
 function populateDropdown() {
   const dropdown = document.getElementById("user-select");
@@ -20,10 +19,19 @@ function populateDropdown() {
   });
 }
 
+function setDefaultDate() {
+  const dateInput = document.getElementById("date");
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  dateInput.value = `${year}-${month}-${day}`;
+}
+
 function initializePage() {
   populateDropdown();
+  setDefaultDate();
 }
 
 window.onload = initializePage;
-
 
