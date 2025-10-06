@@ -1,9 +1,14 @@
 import { getUserIds } from "./common.mjs";
+import { getData, addData, clearData } from "./storage.mjs";
+
+const dropdown = document.getElementById("user-select");
+const topicsContainer = document.getElementById("topics");
+const userForm = document.getElementById("topic-form");
+const titleInput = document.getElementById("title");
+const datePickerInput = document.getElementById("date");
 
 function populateDropdown() {
-  const dropdown = document.getElementById("user-select");
   const userIds = getUserIds();
-
   userIds.forEach((id) => {
     const option = document.createElement("option");
     option.value = id;
@@ -41,9 +46,40 @@ function setIntervalDates(startDate) {
   ];
 }
 
+function handleUserSubmit(event) {
+  event.preventDefault();
+  const selectedUser = dropdown.value;
+  const titleInputValue = titleInput.value;
+  const datePickerInputValue = datePickerInput.value;
+
+  if (titleInputValue.trim() === "" || datePickerInputValue.trim() === "") {
+    alert("Please fill in the form");
+    return;
+  } else if (selectedUser === "") {
+    alert("Please select a user");
+    return;
+  }
+
+  const revisionDates = setIntervalDates(datePickerInputValue);
+
+  const newTopics = [];
+  revisionDates.forEach((date) => {
+    const newDate = {
+      title: titleInputValue,
+      date: date,
+    };
+    newTopics.push(newDate);
+  });
+
+  addData(selectedUser, newTopics);
+  titleInput.value = "";
+}
+
 function initializePage() {
   populateDropdown();
   setDefaultDate();
 }
+
+userForm.addEventListener("submit", handleUserSubmit);
 
 window.onload = initializePage;
