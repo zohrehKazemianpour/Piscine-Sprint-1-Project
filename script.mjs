@@ -17,6 +17,47 @@ function populateDropdown() {
   });
 }
 
+function createAgenda(topic) {
+  const container = document.createElement("li");
+  const topicTitleElement = document.createElement("strong");
+  topicTitleElement.textContent = topic.title;
+  const dateElement = document.createElement("span");
+  dateElement.textContent = ", " + new Date(topic.date).toDateString();
+
+  container.appendChild(topicTitleElement);
+  container.appendChild(dateElement);
+  return container;
+}
+function showAgendaForSelectedUser(userId) {
+  const data = getData(userId);
+  if (!data || data.length === 0) {
+    topicsContainer.innerHTML = "The user has no topic to revise";
+  } else {
+    topicsContainer.innerHTML = "";
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const filteredData = data.filter((topic) => {
+      const topicDate = new Date(topic.date);
+      topicDate.setHours(0, 0, 0, 0);
+      return topicDate >= today;
+    });
+
+    const sortedData = filteredData.sort(
+      (topicA, topicB) => new Date(topicA.date) - new Date(topicB.date)
+    );
+    sortedData.forEach((topic) => {
+      const topicElement = createAgenda(topic);
+      topicsContainer.appendChild(topicElement);
+    });
+  }
+}
+function handleUserSelect(event) {
+  const selectedUser = event.target.value;
+  showAgendaForSelectedUser(selectedUser);
+}
+
 function setDefaultDate() {
   const dateInput = document.getElementById("date");
   const today = new Date();
@@ -26,23 +67,23 @@ function setDefaultDate() {
   dateInput.value = `${year}-${month}-${day}`;
 }
 function setIntervalDates(startDate) {
-  startDate = new Date(startDate);
-  const oneWeekLater = new Date(startDate);
-  oneWeekLater.setDate(startDate.getDate() + 7);
-  const oneMonthLater = new Date(startDate);
-  oneMonthLater.setMonth(startDate.getMonth() + 1);
-  const threeMonthsLater = new Date(startDate);
-  threeMonthsLater.setMonth(startDate.getMonth() + 3);
-  const sixMonthsLater = new Date(startDate);
-  sixMonthsLater.setMonth(startDate.getMonth() + 6);
-  const oneYearLater = new Date(startDate);
-  oneYearLater.setFullYear(startDate.getFullYear() + 1);
+  const baseDate = new Date(startDate);
+  const oneWeekLater = new Date(baseDate);
+  oneWeekLater.setDate(baseDate.getDate() + 7);
+  const oneMonthLater = new Date(baseDate);
+  oneMonthLater.setMonth(baseDate.getMonth() + 1);
+  const threeMonthsLater = new Date(baseDate);
+  threeMonthsLater.setMonth(baseDate.getMonth() + 3);
+  const sixMonthsLater = new Date(baseDate);
+  sixMonthsLater.setMonth(baseDate.getMonth() + 6);
+  const oneYearLater = new Date(baseDate);
+  oneYearLater.setFullYear(baseDate.getFullYear() + 1);
   return [
-    oneWeekLater,
-    oneMonthLater,
-    threeMonthsLater,
-    sixMonthsLater,
-    oneYearLater,
+    oneWeekLater.toISOString().split("T")[0],
+    oneMonthLater.toISOString().split("T")[0],
+    threeMonthsLater.toISOString().split("T")[0],
+    sixMonthsLater.toISOString().split("T")[0],
+    oneYearLater.toISOString().split("T")[0],
   ];
 }
 
@@ -62,24 +103,22 @@ function handleUserSubmit(event) {
 
   const revisionDates = setIntervalDates(datePickerInputValue);
 
-  const newTopics = [];
-  revisionDates.forEach((date) => {
-    const newDate = {
-      title: titleInputValue,
-      date: date,
-    };
-    newTopics.push(newDate);
-  });
+  const newTopics = revisionDates.map((date) => ({
+    title: titleInputValue,
+    date: date,
+  }));
 
   addData(selectedUser, newTopics);
+  showAgendaForSelectedUser(selectedUser);
   titleInput.value = "";
+  setDefaultDate();
 }
+userForm.addEventListener("submit", handleUserSubmit);
+dropdown.addEventListener("change", handleUserSelect);
 
 function initializePage() {
   populateDropdown();
   setDefaultDate();
 }
-
-userForm.addEventListener("submit", handleUserSubmit);
 
 window.onload = initializePage;
