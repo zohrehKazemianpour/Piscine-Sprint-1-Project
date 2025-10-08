@@ -1,5 +1,6 @@
 import { getUserIds } from "./common.mjs";
 import { getData, addData, clearData } from "./storage.mjs";
+import { setIntervalDates } from "./utils.mjs";
 
 const dropdown = document.getElementById("user-select");
 const topicsContainer = document.getElementById("topics");
@@ -66,6 +67,7 @@ function setDefaultDate() {
   const day = String(today.getDate()).padStart(2, "0");
   dateInput.value = `${year}-${month}-${day}`;
 }
+
 function setIntervalDates(startDate) {
   const baseDate = new Date(startDate);
   const oneWeekLater = new Date(baseDate);
@@ -122,3 +124,4 @@ function initializePage() {
 }
 
 window.onload = initializePage;
+export { setIntervalDates };
