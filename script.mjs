@@ -1,5 +1,5 @@
 import { getUserIds } from "./common.mjs";
-import { getData, addData, clearData } from "./storage.mjs";
+import { getData, addData} from "./storage.mjs";
 import { setIntervalDates } from "./utils.mjs";
 
 const dropdown = document.getElementById("user-select");
