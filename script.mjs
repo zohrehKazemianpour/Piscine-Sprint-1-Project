@@ -1,6 +1,44 @@
 import { getUserIds } from "./common.mjs";
-import { getData, addData} from "./storage.mjs";
+import { getData, addData } from "./storage.mjs";
 import { setIntervalDates } from "./utils.mjs";
+function formatDateWithOrdinal(dateString) {
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const year = date.getFullYear();
+
+  const suffix = (day) => {
+    if (day > 3 && day < 21) return "th";
+    switch (day % 10) {
+      case 1:
+        return "st";
+      case 2:
+        return "nd";
+      case 3:
+        return "rd";
+      default:
+        return "th";
+    }
+  };
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const monthName = months[date.getMonth()];
+
+  return `${day}${suffix(day)} ${monthName} ${year}`;
+}
 
 const dropdown = document.getElementById("user-select");
 const topicsContainer = document.getElementById("topics");
@@ -23,7 +61,7 @@ function createAgenda(topic) {
   const topicTitleElement = document.createElement("strong");
   topicTitleElement.textContent = topic.title;
   const dateElement = document.createElement("span");
-  dateElement.textContent = ", " + new Date(topic.date).toDateString();
+  dateElement.textContent = ", " + formatDateWithOrdinal(topic.date);
 
   container.appendChild(topicTitleElement);
   container.appendChild(dateElement);
@@ -103,4 +141,3 @@ function initializePage() {
 }
 
 window.onload = initializePage;
-
