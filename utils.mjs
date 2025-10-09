@@ -1,42 +1,44 @@
 export function addMonths(dateString, months) {
   const [year, month, day] = dateString.split("-").map(Number);
-  const d = new Date(year, month - 1, day);
+  const d = new Date(Date.UTC(year, month - 1, day));
 
-  d.setMonth(d.getMonth() + months);
+  const targetMonth = d.getUTCMonth() + months;
+  d.setUTCMonth(targetMonth);
 
-  if (d.getDate() < day) {
-    d.setDate(0);
+  // Handle month overflow (e.g., Jan 31 → Feb 28)
+  if (d.getUTCMonth() !== ((targetMonth % 12) + 12) % 12) {
+    d.setUTCDate(0);
   }
 
   return d;
 }
 
-function formatDate(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+function formatDateUTC(date) {
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
 
 export function setIntervalDates(startDate) {
   const [year, month, day] = startDate.split("-").map(Number);
-  const baseDate = new Date(year, month - 1, day);
+  const baseDate = new Date(Date.UTC(year, month - 1, day));
 
   const oneWeekLater = new Date(baseDate);
-  oneWeekLater.setDate(baseDate.getDate() + 7);
+  oneWeekLater.setUTCDate(baseDate.getUTCDate() + 7);
 
   const oneMonthLater = addMonths(startDate, 1);
   const threeMonthsLater = addMonths(startDate, 3);
   const sixMonthsLater = addMonths(startDate, 6);
 
   const oneYearLater = new Date(baseDate);
-  oneYearLater.setFullYear(baseDate.getFullYear() + 1);
+  oneYearLater.setUTCFullYear(baseDate.getUTCFullYear() + 1);
 
   return [
-    formatDate(oneWeekLater),
-    formatDate(oneMonthLater),
-    formatDate(threeMonthsLater),
-    formatDate(sixMonthsLater),
-    formatDate(oneYearLater),
+    formatDateUTC(oneWeekLater),
+    formatDateUTC(oneMonthLater),
+    formatDateUTC(threeMonthsLater),
+    formatDateUTC(sixMonthsLater),
+    formatDateUTC(oneYearLater),
   ];
 }
