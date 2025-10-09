@@ -1,16 +1,21 @@
 export function addMonths(dateString, months) {
-  // Parse safely as YYYY, MM, DD (no timezones)
   const [year, month, day] = dateString.split("-").map(Number);
   const d = new Date(year, month - 1, day);
 
   d.setMonth(d.getMonth() + months);
 
-  // Handle overflow (e.g., Jan 31 → Feb 28)
   if (d.getDate() < day) {
     d.setDate(0);
   }
 
   return d;
+}
+
+function formatDate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 export function setIntervalDates(startDate) {
@@ -28,10 +33,10 @@ export function setIntervalDates(startDate) {
   oneYearLater.setFullYear(baseDate.getFullYear() + 1);
 
   return [
-    oneWeekLater.toISOString().split("T")[0],
-    oneMonthLater.toISOString().split("T")[0],
-    threeMonthsLater.toISOString().split("T")[0],
-    sixMonthsLater.toISOString().split("T")[0],
-    oneYearLater.toISOString().split("T")[0],
+    formatDate(oneWeekLater),
+    formatDate(oneMonthLater),
+    formatDate(threeMonthsLater),
+    formatDate(sixMonthsLater),
+    formatDate(oneYearLater),
   ];
 }
